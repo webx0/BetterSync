@@ -13,22 +13,22 @@
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")
-local VERSION_NUMBER = "2.0.1"; --- This too
+local VERSION_NUMBER = "2.0.2"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
 
 --- Window Stuff for Bettersync
-local betterSync_wnd = gui.Window("rbot_bettersync_wnd", "BetterSync™ | v" .. VERSION_NUMBER, 0 , 0, 525, 705);
+local betterSync_wnd = gui.Window("rbot_bettersync_wnd", "BetterSync™ | v" .. VERSION_NUMBER, 0 , 0, 525, 710);
 local betterSyncShow = gui.Checkbox(gui.Reference("RAGE", "MAIN", "Anti-Aim Main"), "rbot_bettersync_show", "Show BetterSync™", 0);
 
 --- Window Groups for Bettersync
 local rbot_bettersync_desync_grp = gui.Groupbox(betterSync_wnd, "Desync", 15, 15, 240, 325);
 local rbot_bettersync_fakelag_grp = gui.Groupbox(betterSync_wnd, "Fakelag", 15, 15+15+325, 240, 175)
-local rbot_bettersync_misc_grp = gui.Groupbox(betterSync_wnd, "Misc", 15, 300+200+30+15, 240, 96)
-local rbot_bettersync_sway_grp = gui.Groupbox(betterSync_wnd, "Sway", 255+15, 15, 240, 220 );
-local rbot_bettersync_manualaa_grp = gui.Groupbox(betterSync_wnd, "Manual AA", 255+15, 220+15+15, 240, 240 );
-local rbot_bettersync_info_grp = gui.Groupbox(betterSync_wnd, "Information", 255+15, 220+30+240+15, 240, 135 )
+local rbot_bettersync_misc_grp = gui.Groupbox(betterSync_wnd, "Misc", 15, 300+200+30+15, 240, 96+4)
+local rbot_bettersync_sway_grp = gui.Groupbox(betterSync_wnd, "Sway", 255+15, 15, 240, 240 );
+local rbot_bettersync_manualaa_grp = gui.Groupbox(betterSync_wnd, "Manual AA", 255+15, 240+15+15, 240, 240 );
+local rbot_bettersync_info_grp = gui.Groupbox(betterSync_wnd, "Information", 255+15, 240+30+240+15, 240, 120 )
 
 --- Desync GUI Stuff
 local desyncMode = gui.Combobox(rbot_bettersync_desync_grp,"rbot_bettersync_desyncmode", "Desync Mode", "Off", "Eye Angles", "Sway", "Custom") --- Credits to april for the idea :D
