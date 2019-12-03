@@ -13,10 +13,17 @@
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")
-local VERSION_NUMBER = "2.0.2"; --- This too
+local VERSION_NUMBER = "2.1.0"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
+
+--- Auto Updater GUI Stuff
+local bettersync_autoupdater_wnd = gui.Window("rbot__bettersync_autoupdater_wnd", "Auto Updater for BetterSync™ | v" .. VERSION_NUMBER, 0, 0, 400, 180)
+local bettersync_autoupdater_grp = gui.Groupbox(bettersync_autoupdater_wnd, "", 15, 15, 370, 100)
+local bettersync_autoupdater_text = gui.Text(bettersync_autoupdater_grp, "")
+local bettersync_autoupdater_wnd_active = 1;
+local bettersync_autoupdater_button = gui.Button(bettersync_autoupdater_grp, "Close", function() bettersync_autoupdater_wnd_active = 0 end)
 
 --- Window Stuff for Bettersync
 local betterSync_wnd = gui.Window("rbot_bettersync_wnd", "BetterSync™ | v" .. VERSION_NUMBER, 0 , 0, 525, 710);
@@ -269,6 +276,7 @@ local function menu()
 
     if input.IsButtonPressed(gui.GetValue("msc_menutoggle")) then
         menuPressed = menuPressed == 0 and 1 or 0;
+        bettersync_autoupdater_wnd_active = bettersync_autoupdater_wnd_active == 0 and 1 or 0
     end
 
     if (betterSyncShow:GetValue()) then
@@ -548,10 +556,14 @@ end
 --- Actual code
 
 local function updateEventHandler()
+
+    bettersync_autoupdater_wnd:SetActive(bettersync_autoupdater_wnd_active)
+
     if (update_available and not update_downloaded) then
+        bettersync_autoupdater_text:SetText("Update is getting downloaded.")
+
         if (gui.GetValue("lua_allow_cfg") == false) then
             draw.Color(255, 0, 0, 255);
-            draw.Text(0, 0, "[BetterSync] An update is available, please enable Lua Allow Config and Lua Editing in the settings tab");
         else
             local new_version_content = http.Get(SCRIPT_FILE_ADDR);
             local old_script = file.Open(SCRIPT_FILE_NAME, "w");
@@ -564,14 +576,19 @@ local function updateEventHandler()
 
     if (update_downloaded) then
         draw.Color(255, 0, 0, 255);
-        draw.Text(0, 0, "[BetterSync] An update has automatically been downloaded, please reload the BetterSync script");
+        bettersync_autoupdater_text:SetText("Update available, please reload the script.")
         return;
     end
 
     if (not version_check_done) then
         if (gui.GetValue("lua_allow_http") == false) then
             draw.Color(255, 0, 0, 255);
-            draw.Text(0, 0, "[BetterSync] Please enable Lua HTTP Connections in your settings tab to use this script");
+            bettersync_autoupdater_text:SetText("Please allow internet connections for scripts.")
+            return;
+        end
+
+        if (gui.GetValue("lua_allow_cfg") == false) then
+            bettersync_autoupdater_text:SetText("Please allow Config editing for scripts.")
             return;
         end
 
@@ -580,6 +597,9 @@ local function updateEventHandler()
         if (version ~= VERSION_NUMBER) then
             update_available = true;
         end
+
+        bettersync_autoupdater_text:SetText("Your client is up to date.")
+
     end
 end
 
