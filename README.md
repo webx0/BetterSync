@@ -64,6 +64,7 @@ better.
 
 ###### [Release 2.1.0]
 * Added Auto Updater GUI for better visibility.
+  * Hotfix r2.1.0a_pub: Fixed Auto Updater GUI not closing correctly.
 
 ## Contact:
 * E-Mail: superyu.development@gmail.com
