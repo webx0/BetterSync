@@ -13,7 +13,7 @@
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")
-local VERSION_NUMBER = "2.1.0a"; --- This too
+local VERSION_NUMBER = "2.1.0b"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
@@ -111,6 +111,8 @@ local texture = draw.CreateTexture(imgRGBA, imgWidth, imgHeight)
 local legitSafety = false;
 local del = globals.CurTime() + 0.100
 local inFreezeTime = false;
+local switch = false;
+local dx, dy = 0, 0;
 
 --- Manual AA Variables
 local LeftKey = 0;
@@ -449,6 +451,33 @@ local function offSetting() --- THIS ONLY WORKS FOR AUTO OR WEAPONS WITH SIMILAR
 
 end
 
+local function velocityStuff()
+
+    if not pLocal then
+        return
+    end
+
+    local vel = math.sqrt(pLocal:GetPropFloat( "localdata", "m_vecVelocity[0]" )^2 + pLocal:GetPropFloat( "localdata", "m_vecVelocity[1]" )^2)
+
+    if jumpscoutFix:GetValue() then
+        if vel > 5 then
+            gui.SetValue("msc_autostrafer_enable", 1)
+        else
+            gui.SetValue("msc_autostrafer_enable", 0)
+        end
+    end
+
+    if del < globals.CurTime() then
+        switch = not switch
+        del = globals.CurTime() + 0.050
+    end
+
+    if vel > 3 then
+        del = globals.CurTime() + 0.050
+    end
+
+end
+
 -- Manual AA, credits to "El Credito"/gowork88#1556.
 
 local function draw_indicator()
@@ -621,6 +650,7 @@ callbacks.Register( "Draw", function()
     offSetting()
     mainManualAA()
     pulseFakeChams()
+    velocityStuff()
 
     if desyncMode:GetValue() == 2 then
         sway()
@@ -629,6 +659,9 @@ callbacks.Register( "Draw", function()
     if desyncMode:GetValue() > 0 then
         desync()
     end
+
+    
+
 end
 );
 
@@ -648,16 +681,7 @@ callbacks.Register( "CreateMove", function(pCmd)
         fakeInfo:SetText("Fake (Inconsistent): " .. round(dy, 1) .. "°")
     end
 
-    local switch
-    local vel = math.sqrt(pLocal:GetPropFloat( "localdata", "m_vecVelocity[0]" )^2 + pLocal:GetPropFloat( "localdata", "m_vecVelocity[1]" )^2)
 
-    if jumpscoutFix:GetValue() then
-        if vel > 5 then
-            gui.SetValue("msc_autostrafer_enable", 1)
-        else
-            gui.SetValue("msc_autostrafer_enable", 0)
-        end
-    end
 
     if shooting and chokeOnShot:GetValue() == 2 then
         gui.SetValue("msc_fakelag_limit", 61)
@@ -668,21 +692,17 @@ callbacks.Register( "CreateMove", function(pCmd)
        end
     end
 
-    if del < globals.CurTime() then
-        switch = not switch
-        del = globals.CurTime() + 0.050
-    end
+    local vel = math.sqrt(pLocal:GetPropFloat( "localdata", "m_vecVelocity[0]" )^2 + pLocal:GetPropFloat( "localdata", "m_vecVelocity[1]" )^2)
 
-    if vel > 5 then
-        del = globals.CurTime() + 0.050
+    if vel > 3 then
         return
     end
 
     if antilby:GetValue() then
         if switch then
-            pCmd:SetSideMove(3)
+            pCmd:SetSideMove(2)
         else
-            pCmd:SetSideMove(-3)
+            pCmd:SetSideMove(-2)
         end
     end
 
