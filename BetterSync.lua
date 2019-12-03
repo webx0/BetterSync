@@ -13,7 +13,7 @@
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")
-local VERSION_NUMBER = "2.1.0"; --- This too
+local VERSION_NUMBER = "2.1.0a"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
@@ -23,7 +23,8 @@ local bettersync_autoupdater_wnd = gui.Window("rbot__bettersync_autoupdater_wnd"
 local bettersync_autoupdater_grp = gui.Groupbox(bettersync_autoupdater_wnd, "", 15, 15, 370, 100)
 local bettersync_autoupdater_text = gui.Text(bettersync_autoupdater_grp, "")
 local bettersync_autoupdater_wnd_active = 1;
-local bettersync_autoupdater_button = gui.Button(bettersync_autoupdater_grp, "Close", function() bettersync_autoupdater_wnd_active = 0 end)
+local bettersync_autoupdater_wnd_closed = false;
+local bettersync_autoupdater_button = gui.Button(bettersync_autoupdater_grp, "Close", function() bettersync_autoupdater_wnd_active = 0 bettersync_autoupdater_wnd_closed = true end)
 
 --- Window Stuff for Bettersync
 local betterSync_wnd = gui.Window("rbot_bettersync_wnd", "BetterSync™ | v" .. VERSION_NUMBER, 0 , 0, 525, 710);
@@ -276,7 +277,9 @@ local function menu()
 
     if input.IsButtonPressed(gui.GetValue("msc_menutoggle")) then
         menuPressed = menuPressed == 0 and 1 or 0;
-        bettersync_autoupdater_wnd_active = bettersync_autoupdater_wnd_active == 0 and 1 or 0
+        if not bettersync_autoupdater_wnd_closed then
+            bettersync_autoupdater_wnd_active = bettersync_autoupdater_wnd_active == 0 and 1 or 0
+        end
     end
 
     if (betterSyncShow:GetValue()) then
