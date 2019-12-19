@@ -66,6 +66,11 @@ better.
 * Added Auto Updater GUI for better visibility.
   * Hotfix r2.1.0a_pub: Fixed Auto Updater GUI not closing correctly.
   * Hotfix r2.1.0b_pub: Fixed Anti-LBY.
+ 
+###### [Release 2.1.1]
+* Fixed info tab displaying wrong values.
+* Removed fakelag section.
+* Made sway and pulse fake chams rely on ticks instead of fps.
 
 ## Contact:
 * E-Mail: superyu.development@gmail.com
