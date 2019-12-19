@@ -5,7 +5,6 @@
 ---
 
 --- Todo list (Ignore this, it's only for me (Superyu))
---- > Make sway using globals.CurTime() to not make it rely on fps
 --- > Improve code performance
 --- > Improve code generally.
 
@@ -13,7 +12,7 @@
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")
-local VERSION_NUMBER = "2.1.0b"; --- This too
+local VERSION_NUMBER = "2.1.1"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
@@ -27,16 +26,15 @@ local bettersync_autoupdater_wnd_closed = false;
 local bettersync_autoupdater_button = gui.Button(bettersync_autoupdater_grp, "Close", function() bettersync_autoupdater_wnd_active = 0 bettersync_autoupdater_wnd_closed = true end)
 
 --- Window Stuff for Bettersync
-local betterSync_wnd = gui.Window("rbot_bettersync_wnd", "BetterSync™ | v" .. VERSION_NUMBER, 0 , 0, 525, 710);
+local betterSync_wnd = gui.Window("rbot_bettersync_wnd", "BetterSync™ | v" .. VERSION_NUMBER, 0 , 0, 525, 655);
 local betterSyncShow = gui.Checkbox(gui.Reference("RAGE", "MAIN", "Anti-Aim Main"), "rbot_bettersync_show", "Show BetterSync™", 0);
 
 --- Window Groups for Bettersync
 local rbot_bettersync_desync_grp = gui.Groupbox(betterSync_wnd, "Desync", 15, 15, 240, 325);
-local rbot_bettersync_fakelag_grp = gui.Groupbox(betterSync_wnd, "Fakelag", 15, 15+15+325, 240, 175)
-local rbot_bettersync_misc_grp = gui.Groupbox(betterSync_wnd, "Misc", 15, 300+200+30+15, 240, 96+4)
+local rbot_bettersync_misc_grp = gui.Groupbox(betterSync_wnd, "Misc", 15, 300+30+25, 240, 96+4)
 local rbot_bettersync_sway_grp = gui.Groupbox(betterSync_wnd, "Sway", 255+15, 15, 240, 240 );
 local rbot_bettersync_manualaa_grp = gui.Groupbox(betterSync_wnd, "Manual AA", 255+15, 240+15+15, 240, 240 );
-local rbot_bettersync_info_grp = gui.Groupbox(betterSync_wnd, "Information", 255+15, 240+30+240+15, 240, 120 )
+local rbot_bettersync_info_grp = gui.Groupbox(betterSync_wnd, "Information", 15, 455+15, 240, 120 )
 
 --- Desync GUI Stuff
 local desyncMode = gui.Combobox(rbot_bettersync_desync_grp,"rbot_bettersync_desyncmode", "Desync Mode", "Off", "Eye Angles", "Sway", "Custom") --- Credits to april for the idea :D
@@ -45,28 +43,19 @@ local desyncRange = gui.Slider( rbot_bettersync_desync_grp, "rbot_bettersync_des
 local InverterKey = gui.Keybox(rbot_bettersync_desync_grp, "rbot_bettersync_desync_range_inverter", "Inverter Key", 0);
 
 local antiaimOptions = gui.Multibox(rbot_bettersync_desync_grp, "Options")
-local twist = gui.Checkbox(antiaimOptions, "rbot_bettersync_twist", "Twist", 0)
 local antilby  = gui.Checkbox(antiaimOptions, "rbot_bettersync_antilby", "Anti-LBY", 0);
 local headCentering = gui.Checkbox( antiaimOptions, "rbot_bettersync_headcentering", "Head Centering", 0);
 local fakeMovingSide = gui.Combobox( rbot_bettersync_desync_grp, "rbot_bettersync_balanceifmoving", "Moving Fake Side", "Off", "Left", "Right");
 local customOffset = gui.Slider(rbot_bettersync_desync_grp, "rbot_bettersync_offset", "Custom Offset", 0, -180, 180);
 
---- Fakelag GUI Stuff
-local chokeLimit = gui.Slider(rbot_bettersync_fakelag_grp, "rbot_bettersync_chokelimit", "Choke limit", 0, 0, 62);
-local chokeOnShot = gui.Combobox(rbot_bettersync_fakelag_grp, "msc_fakelag_onshot", "Choke On Shot", "Off", "Inbuilt", "Sendpacket")
-local chokeOnShotValue = gui.Slider(rbot_bettersync_fakelag_grp, "msc_fakelag_onshot_value", "On Shot Length", 16, 1, 62)
-
 --- Fixes GUI Stuff
 local jumpscoutFix = gui.Checkbox(rbot_bettersync_misc_grp, "rbot_bettersync_fixes_jumpscout", "Fix Jumpscout", 0)
 local fakeduckFix = gui.Checkbox(rbot_bettersync_misc_grp, "rbot_bettersync_fixes_fakeduckfakelag", "Fix Fakeduck", 0)
 local pulseFakeEnable = gui.Checkbox( rbot_bettersync_misc_grp, "rbot_bettersync_msc_pulsefake", "Pulsating Fake Chams", 0);
-local pulseFakeSpeed = 1
-local pulseFakeRange1 = 15
-local pulseFakeRange2 = 50
 
 ---Sway GUI Stuff
 local swaySwap = gui.Checkbox( rbot_bettersync_sway_grp, "rbot_bettersync_sway_swap", "Auto Swap Side", 1)
-local swaySpeed = gui.Slider( rbot_bettersync_sway_grp, "rbot_bettersync_sway_speed", "Speed", 1, 0.1, 7.5);
+local swaySpeed = gui.Slider( rbot_bettersync_sway_grp, "rbot_bettersync_sway_speed", "Speed", 2.5, 1, 7.5);
 local swayRange1 = gui.Slider( rbot_bettersync_sway_grp, "rbot_bettersync_sway_rangestart", "Range Start", -60, -60, 60);
 local swayRange2 = gui.Slider( rbot_bettersync_sway_grp, "rbot_bettersync_sway_rangeend", "Range End", 60, -60, 60);
 local swayDeadzone = gui.Slider( rbot_bettersync_sway_grp, "rbot_bettersync_sway_deadzone", "Deadzone", 1, 1, 60);
@@ -93,18 +82,14 @@ local normal = draw.CreateFont("Arial")
 
 --- BetterSync Variables
 local pLocal;
-local max2, min2 = 0, 0;
-local cs2, cd2 = 0, 0;
 local max, min = 0, 0;
 local cs, cd = 0, 0;
-local swayVal;
+local cs2, cd2, s = 0, 0, 2;
+local swayVal = 0;
 local offset = 0;
 local menuPressed = 1;
 local manualAdd = 0;
 local fakeduckKey;
-local shotTime = globals.CurTime();
-local shooting = false;
-local fakelagRecover = true;
 local pngData = http.Get("\32\32\32\32\104\116\116\112\115\58\47\47\105\46\105\109\103\117\114\46\99\111\109\47\114\98\65\118\51\51\74\46\112\110\103\10");
 local imgRGBA, imgWidth, imgHeight = common.DecodePNG(pngData);
 local texture = draw.CreateTexture(imgRGBA, imgWidth, imgHeight)
@@ -112,7 +97,9 @@ local legitSafety = false;
 local del = globals.CurTime() + 0.100
 local inFreezeTime = false;
 local switch = false;
-local dx, dy = 0, 0;
+local dx, dy, rx, ry = 0, 0, 0, 0
+local lastTickSway = 0;
+local lastTickPulse = 0 --- this is actually just for pulse fake chams.
 
 --- Manual AA Variables
 local LeftKey = 0;
@@ -124,36 +111,18 @@ client.AllowListener("round_freeze_end")
 client.AllowListener("round_start")
 client.AllowListener("weapon_fire")
 
---- Code
-
+--- Helpers
 local function round(num, numDecimalPlaces)
     return tonumber(string.format("%." .. (numDecimalPlaces or 0) .. "f", num))
 end
 
-local function TIME_TO_TICKS(time)
-    local TICK_INTERVAL	= globals.TickInterval()
-    return round((0.5 + (time) / TICK_INTERVAL), 0);
-end
-
-local function TICKS_TO_TIME(ticks)
-    local TICK_INTERVAL	= globals.TickInterval()
-    return TICK_INTERVAL * ticks
-end
-
-local function updateInformation()
+--- Functions
+local function handleInformation()
 
     if engine.GetMapName() ~= "" then
 
         if pLocal and pLocal:IsAlive() then
-            local rx, ry = entities.GetLocalPlayer():GetProp('m_angEyeAngles')
-            local local_lby = entities.GetLocalPlayer():GetProp('m_flLowerBodyYawTarget')
-
-            local rLby = round(local_lby, 1)
-            local rReal = round(ry, 1)
-
-            realInfo:SetText("Real: " .. rReal .. "°")
-            lbyInfo:SetText("Fake LBY: " .. rLby .. "°")
-            insecureInfo:SetText(rReal == rLby and "Insecure: False" or "Insecure: True")
+            --- Empty for now
         else
             realInfo:SetText("Please be alive to see your angle info.")
             fakeInfo:SetText("")
@@ -170,7 +139,7 @@ local function updateInformation()
 
 end
 
-local function safetyCheck()
+local function handleSafety()
     if (gui.GetValue("lbot_active")) and not gui.GetValue("rbot_active") then
         legitSafety = true;
     else
@@ -178,104 +147,33 @@ local function safetyCheck()
     end
 end
 
-local function pulseFakeChams()
+local function handlePulse()
 
     if (pulseFakeEnable:GetValue()) then
 
-        local speed2 = pulseFakeSpeed
-
-        if pulseFakeRange1 < pulseFakeRange2 then
-            min2 = pulseFakeRange1
-            max2 = pulseFakeRange2
-        else
-            min2 = pulseFakeRange2
-            max2 = pulseFakeRange1
-        end
-    
-        if (cs2 >= max2) then
-            cd2 = 1;
-        elseif (cs2 <= min2 + speed2) then
-            cd2 = 0;
-        end
-        
-        if (cd2 == 0) then
-            cs2 = cs2 + speed2;
-        elseif (cd2 == 1) then
-            cs2 = cs2 - speed2;
-        end
-
-        local alpha = round(cs2, 0)
-        local r, g, b, a = gui.GetValue("clr_chams_ghost_client");
-        gui.SetValue("clr_chams_ghost_client", r, g, b, alpha);
-    end
-end
-
-local function fakelag()
-
-    local fl = false;
-    local flMode = 0;
-    local flv = chokeLimit:GetValue()
-
-    local sv_maxusrcmdprocessticks = client.GetConVar("sv_maxusrcmdprocessticks")
-    local flLimit = sv_maxusrcmdprocessticks;
- 
-    if twist:GetValue() then
-        flv = 4
-        flMode = 0
-        fl = true
-        fakelagRecover = false
-    end
-
-    if fakelagRecover then 
-        flMode = gui.GetValue("msc_fakelag_mode")
-    end
-
-    if entities.GetLocalPlayer() ~= nil then
-        fakeduckKey = gui.GetValue("rbot_antiaim_fakeduck")
-        if fakeduckFix:GetValue() and fakeduckKey ~= nil then
-            if input.IsButtonDown(fakeduckKey) then
-                fl = true
-                flv = 4
-                gui.SetValue("msc_fakelag_mode", 0)
-                fakelagRecover = true;
-            else
-                fakelagRecover = false;
+        if globals.TickCount() > lastTickPulse then
+            
+            if (cs2 >= 75) then
+                cd2 = 1;
+            elseif (cs2 <= 0 + s) then
+                cd2 = 0;
             end
-        end
-    end 
 
-    if shooting and chokeOnShot:GetValue() == 1 then
+            if (cd2 == 0) then
+                cs2 = cs2 + s;
+            elseif (cd2 == 1) then
+                cs2 = cs2 - s;
+            end
 
-        fl = true;
-        flMode = 0
-        flv = chokeOnShotValue:GetValue();
-        flLimit = 61
-        fakelagRecover = true;
-
-        if shotTime + TICKS_TO_TIME(chokeOnShotValue:GetValue()) < globals.CurTime() then
-            shooting = false;
-            fakelagRecover =  false;
-       end
-    end
-
-    if legitSafety then
-        fl = false
-    else
-        if (flv > 0) then
-            fl = true
-        else
-            fl = false
+            if cs2 < 0 then cs2 = 0 end
+            local r, g, b, a = gui.GetValue("clr_chams_ghost_client");
+            gui.SetValue("clr_chams_ghost_client", r, g, b, cs2);
+            lastTickPulse = globals.TickCount()
         end
     end
-
-    gui.SetValue("msc_fakelag_enable", fl)
-    gui.SetValue("msc_fakelag_value", flv)
-    gui.SetValue("msc_fakelag_mode", flMode)
-    gui.SetValue("msc_fakelag_limit", flLimit)
-
 end
 
-local function menu()
+local function handleMenu()
 
     if input.IsButtonPressed(gui.GetValue("msc_menutoggle")) then
         menuPressed = menuPressed == 0 and 1 or 0;
@@ -301,55 +199,60 @@ local function menu()
     end
 end
 
-local function sway()
+local function handleSway()
 
     if desyncMode:GetValue() == 2 then
 
-        local speed = swaySpeed:GetValue()
+        if globals.TickCount() > lastTickSway then
 
-        if swayRange1:GetValue() < swayRange2:GetValue() then
-            min = swayRange1:GetValue()
-            max = swayRange2:GetValue()
-        else
-            min = swayRange2:GetValue()
-            max = swayRange1:GetValue()
-        end
+            local speed = swaySpeed:GetValue()
 
-        if (cs >= max) then
-            cd = 1;
-        elseif (cs <= min + speed) then
-            cd = 0;
-        end
+            if swayRange1:GetValue() < swayRange2:GetValue() then
+                min = swayRange1:GetValue()
+                max = swayRange2:GetValue()
+            else
+                min = swayRange2:GetValue()
+                max = swayRange1:GetValue()
+            end
+
+            if (cs >= max) then
+                cd = 1;
+            elseif (cs <= min + speed) then
+                cd = 0;
+            end
         
-        if (cd == 0) then
-            cs = cs + speed;
-        elseif (cd == 1) then
-            cs = cs - speed;
-        end
-
-        local deadzoneP = swayDeadzone:GetValue()
-        local deadzoneN = deadzoneP * -1
-
-        if cs > 0 then
-            if cs < deadzoneP then
-                cs = deadzoneN
+            if (cd == 0) then
+                cs = cs + speed;
+            elseif (cd == 1) then
+                cs = cs - speed;
             end
-        end
 
-        if cs < 0 then
-            if cs > deadzoneN then
-                cs = deadzoneP
+            local deadzoneP = swayDeadzone:GetValue()
+            local deadzoneN = deadzoneP * -1
+
+            if cs > 0 then
+                if cs < deadzoneP then
+                    cs = deadzoneN
+                end
             end
-        end
 
-        swayVal = cs;
+            if cs < 0 then
+                if cs > deadzoneN then
+                    cs = deadzoneP
+                end
+            end
+
+            lastTickSway = globals.TickCount()
+            swayVal = cs;
+        end
     end
 end
 
-local function desync()
+local function handleDesync()
 
     local dv = 0;
     local invert;
+    local inFakeduck = false;
 
     if (InverterKey:GetValue() ~= 0) then
         if (input.IsButtonPressed(InverterKey:GetValue())) then
@@ -404,6 +307,7 @@ local function desync()
     if fakeduckFix:GetValue() and fakeduckKey ~= nil then
         if input.IsButtonDown(fakeduckKey) then
             dv = 0
+            inFakeduck = true;
         end
     end
 
@@ -423,12 +327,12 @@ local function desync()
         FixedlowerbodyTarget = pLocal:GetProp("m_angEyeAngles[1]")
     end
 
-    if not inFreezeTime then
+    if not inFreezeTime and not inFakeduck then
         pLocal:SetProp("m_flLowerBodyYawTarget", FixedlowerbodyTarget)
     end
 end
 
-local function offSetting() --- THIS ONLY WORKS FOR AUTO OR WEAPONS WITH SIMILAR MAXDELTA BECAUSE AIMWARE DOESN'T ALLOW ME TO GET MAXDESYNCDELTA YET.
+local function handleOffsets() --- THIS ONLY WORKS FOR AUTO OR WEAPONS WITH SIMILAR MAXDELTA BECAUSE AIMWARE DOESN'T ALLOW ME TO GET MAXDESYNCDELTA YET.
 
     if headCentering:GetValue() == true then
         
@@ -451,7 +355,7 @@ local function offSetting() --- THIS ONLY WORKS FOR AUTO OR WEAPONS WITH SIMILAR
 
 end
 
-local function velocityStuff()
+local function handleVelocity()
 
     if not pLocal then
         return
@@ -584,10 +488,7 @@ local function mainManualAA()
 end
 
 --- Auto updater by ShadyRetard/Shady#0001
-
---- Actual code
-
-local function updateEventHandler()
+local function handleUpdates()
 
     bettersync_autoupdater_wnd:SetActive(bettersync_autoupdater_wnd_active)
 
@@ -635,38 +536,34 @@ local function updateEventHandler()
     end
 end
 
-callbacks.Register("Draw", updateEventHandler);
-
-callbacks.Register( "Draw", function()
+--- Hooks
+local function drawHook()
     pLocal = entities.GetLocalPlayer()
 
     --- Important Stuff
-    menu()
-    safetyCheck()
+    handleUpdates()
+    handleMenu()
+    handleSafety()
 
     --- The rest
-    updateInformation()
-    fakelag()
-    offSetting()
+    handleInformation()
+    handleInformation()
     mainManualAA()
-    pulseFakeChams()
-    velocityStuff()
-
-    if desyncMode:GetValue() == 2 then
-        sway()
-    end
+    handlePulse()
+    handleVelocity()
+    handleOffsets()
 
     if desyncMode:GetValue() > 0 then
-        desync()
+        handleDesync()
+        if desyncMode:GetValue() == 2 then
+            handleSway()
+        end
     end
 
-    
-
 end
-);
 
-callbacks.Register( "CreateMove", function(pCmd)
-
+local function CreateMoveHook(pCmd)
+    
     if legitSafety then
         return
     end
@@ -675,21 +572,20 @@ callbacks.Register( "CreateMove", function(pCmd)
         return
     end
 
-    dx, dy = pCmd:GetViewAngles()
-
-    if engine.GetMapName() ~= nil then
-        fakeInfo:SetText("Fake (Inconsistent): " .. round(dy, 1) .. "°")
+    if pCmd:GetSendPacket() then
+        dx, dy = pCmd:GetViewAngles()
+    else
+        rx, ry = pCmd:GetViewAngles()
     end
 
+    local local_lby = entities.GetLocalPlayer():GetProp('m_flLowerBodyYawTarget')
+    local rLby = round(local_lby, 1)
 
-
-    if shooting and chokeOnShot:GetValue() == 2 then
-        gui.SetValue("msc_fakelag_limit", 61)
-        pCmd:SetSendPacket(false)
-        if shotTime + TICKS_TO_TIME(chokeOnShotValue:GetValue()) < globals.CurTime() then
-            shooting = false;
-            pCmd:SetSendPacket(true)
-       end
+    if engine.GetMapName() ~= nil then
+        realInfo:SetText("Real: " .. round(ry,1) .. "°")
+        fakeInfo:SetText("Fake: " .. round(dy, 1) .. "°")
+        lbyInfo:SetText("LBY: " .. rLby .. "°")
+        insecureInfo:SetText(round(dy,1) == rLby and "Insecure: False" or "Insecure: True")
     end
 
     local vel = math.sqrt(pLocal:GetPropFloat( "localdata", "m_vecVelocity[0]" )^2 + pLocal:GetPropFloat( "localdata", "m_vecVelocity[1]" )^2)
@@ -705,10 +601,9 @@ callbacks.Register( "CreateMove", function(pCmd)
             pCmd:SetSideMove(-2)
         end
     end
+end
 
-end)
-
-callbacks.Register("FireGameEvent", function(event)
+local function EventHook(event)
 
     if event:GetName() == "round_freeze_end" then
         inFreezeTime = false;
@@ -717,26 +612,9 @@ callbacks.Register("FireGameEvent", function(event)
     if event:GetName() == "round_start" then
         inFreezeTime = true;
     end
+end
 
-    if legitSafety then
-        return
-    end
-
-    if not pLocal then
-        return
-    end
-
-    if chokeOnShot:GetValue() ~= 0 then
-
-        if event:GetName() == "weapon_fire" then
-            EventUserId = event:GetInt("userid")
-            local pLocalInfo = client.GetPlayerInfo(client.GetLocalPlayerIndex())
-
-            if pLocalInfo["UserID"] == EventUserId then 
-                shooting = true
-                shotTime = globals.CurTime()
-            end
-        end
-    end
-
-end)
+--- Callbacks
+callbacks.Register( "Draw", drawHook);
+callbacks.Register( "CreateMove", CreateMoveHook)
+callbacks.Register("FireGameEvent", EventHook)
