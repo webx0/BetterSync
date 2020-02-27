@@ -8,7 +8,7 @@
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")
-local VERSION_NUMBER = "3.1"; --- This too
+local VERSION_NUMBER = "3.2"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
@@ -26,7 +26,7 @@ local BETTERSYNC_SWAY_GROUP = gui.Groupbox(gui.Reference("Ragebot", "BetterSync"
 
 --- Desync GUI Stuff
 local BETTERSYNC_ENABLE = gui.Checkbox(BETTERSYNC_DESYNC_GROUP, "rbot.bettersync.enabled", "Enabled", false)
-local BETTERSYNC_LBY_MODE = gui.Combobox(BETTERSYNC_DESYNC_GROUP, "rbot.bettersync.lby.mode", "LBY Mode", "Off", "Match", "Invert")
+local BETTERSYNC_LBY_MODE = gui.Combobox(BETTERSYNC_DESYNC_GROUP, "rbot.bettersync.lby.mode", "LBY Mode", "Off", "Match", "Invert", "Strong Match", "Strong Invert", "Stronger Match", "Stronger Invert" ,"180")
 local BETTERSYNC_ANTILBY  = gui.Checkbox(BETTERSYNC_DESYNC_GROUP, "rbot.bettersync.antilby", "Anti-LBY", 0);
 
 --- Fixes GUI Stuff
@@ -88,67 +88,104 @@ end
 
 local function handleDesync()
 
-    local val = 0;
+    local val = gui.GetValue("rbot.antiaim.base.rotation");
 
     if globals.TickCount() > lastTickSway then
 
-        local speed = BETTERSYNC_SWAY_SPEED:GetValue() / 2
+        if BETTERSYNC_ENABLE:GetValue() then
+            local speed = BETTERSYNC_SWAY_SPEED:GetValue() / 3
 
-        if BETTERSYNC_SWAY_RANGE1:GetValue() < BETTERSYNC_SWAY_RANGE2:GetValue() then
-            min = BETTERSYNC_SWAY_RANGE1:GetValue()
-            max = BETTERSYNC_SWAY_RANGE2:GetValue()
-        else
-            min = BETTERSYNC_SWAY_RANGE2:GetValue()
-            max = BETTERSYNC_SWAY_RANGE1:GetValue()
-        end
+            if BETTERSYNC_SWAY_RANGE1:GetValue() < BETTERSYNC_SWAY_RANGE2:GetValue() then
+                min = BETTERSYNC_SWAY_RANGE1:GetValue()
+                max = BETTERSYNC_SWAY_RANGE2:GetValue()
+            else
+                min = BETTERSYNC_SWAY_RANGE2:GetValue()
+                max = BETTERSYNC_SWAY_RANGE1:GetValue()
+            end
 
-        if (cs >= max) then
-            cd = 1;
-        elseif (cs <= min + speed) then
-            cd = 0;
-        end
+            if (cs >= max) then
+                cd = 1;
+            elseif (cs <= min + speed) then
+                cd = 0;
+            end
         
-        if (cd == 0) then
-            cs = cs + speed;
-        elseif (cd == 1) then
-            cs = cs - speed;
-        end
-
-        local deadzoneP = BETTERSYNC_SWAY_DEADZONE:GetValue()
-        local deadzoneN = deadzoneP * -1
-
-        if cs > 0 then
-            if cs < deadzoneP then
-                cs = deadzoneN
+            if (cd == 0) then
+                cs = cs + speed;
+            elseif (cd == 1) then
+                cs = cs - speed;
             end
-        end
 
-        if cs < 0 then
-            if cs > deadzoneN then
-                cs = deadzoneP
+            local deadzoneP = BETTERSYNC_SWAY_DEADZONE:GetValue()
+            local deadzoneN = deadzoneP * -1
+
+            if cs > 0 then
+                if cs < deadzoneP then
+                    cs = deadzoneN
+                end
             end
+
+            if cs < 0 then
+                if cs > deadzoneN then
+                    cs = deadzoneP
+                end
+            end
+            val = cs;
         end
 
         lastTickSway = globals.TickCount()
-        val = cs;
-
         local lby = 0
 
         if BETTERSYNC_LBY_MODE:GetValue() > 0 then
             if BETTERSYNC_LBY_MODE:GetValue() == 1 then
                 lby = val;
-            else
+            elseif BETTERSYNC_LBY_MODE:GetValue() == 2 then
                 lby = val * -1
+            elseif BETTERSYNC_LBY_MODE:GetValue() == 3 then
+                if val > 0 then
+                    lby = 58;
+                elseif val < 0 then
+                    lby = -58;
+                else
+                    lby = 180;
+                end
+            elseif BETTERSYNC_LBY_MODE:GetValue() == 4 then
+                if val > 0 then
+                    lby = -58;
+                elseif val < 0 then
+                    lby = 58;
+                else
+                    lby = 180;
+                end
+            elseif BETTERSYNC_LBY_MODE:GetValue() == 5 then
+                if val > 0 then
+                    lby = 120;
+                elseif val < 0 then
+                    lby = -120;
+                else
+                    lby = 180;
+                end
+            elseif BETTERSYNC_LBY_MODE:GetValue() == 6 then
+                if val > 0 then
+                    lby = -120;
+                elseif val < 0 then
+                    lby = 120;
+                else
+                    lby = 180;
+                end
+            elseif BETTERSYNC_LBY_MODE:GetValue() == 7 then
+                lby = 180
             end
-        end
 
-        if not inFreezeTime then
-            gui.SetValue("rbot.antiaim.base.rotation", val)
-            gui.SetValue("rbot.antiaim.left.rotation", val)
-            gui.SetValue("rbot.antiaim.right.rotation", val)
             gui.SetValue("rbot.antiaim.base.lby", lby)
             gui.SetValue("rbot.antiaim.left.lby", lby)
             gui.SetValue("rbot.antiaim.right.lby", lby)
+
+        end
+
+        if not inFreezeTime and BETTERSYNC_ENABLE:GetValue() then
+            gui.SetValue("rbot.antiaim.base.rotation", val)
+            gui.SetValue("rbot.antiaim.left.rotation", val)
+            gui.SetValue("rbot.antiaim.right.rotation", val)
         end
     end
 end
@@ -184,19 +221,14 @@ end
 local function drawHook()
     pLocal = entities.GetLocalPlayer()
 
-    --- The rest
     handlePulse()
     handleVelocity()
+    handleDesync()
         
     if engine.GetMapName() == "" then
         lastTickPulse = 0;
         lastTickSway = 0;
     end
-
-    if BETTERSYNC_ENABLE:GetValue() then
-        handleDesync()
-    end
-
 end
 
 local function CreateMoveHook(pCmd)
@@ -213,9 +245,9 @@ local function CreateMoveHook(pCmd)
 
     if BETTERSYNC_ANTILBY:GetValue() then
         if switch then
-            pCmd.SideMove = 2
+            pCmd.sidemove = 2
         else
-            pCmd.SideMove = -2
+            pCmd.sidemove = -2
         end
     end
 end
