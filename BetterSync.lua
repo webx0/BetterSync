@@ -8,7 +8,7 @@
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")
-local VERSION_NUMBER = "3.0b"; --- This too
+local VERSION_NUMBER = "3.1"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
