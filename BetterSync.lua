@@ -8,7 +8,7 @@
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")
-local VERSION_NUMBER = "3.0"; --- This too
+local VERSION_NUMBER = "3.0b"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
@@ -34,10 +34,10 @@ local BETTERSYNC_JUMPSCOUT = gui.Checkbox(BETTERSYNC_MISC_GROUP, "rbot_bettersyn
 local BETTERSYNC_PULSEFAKE = gui.Checkbox(BETTERSYNC_MISC_GROUP, "rbot_bettersync_msc_pulsefake", "Pulsating Fake Chams", 0);
 
 ---Sway GUI Stuff
-local BETTERSYNC_SWAY_SPEED = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_speed", "Speed", 2, 1, 15);
+local BETTERSYNC_SWAY_SPEED = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_speed", "Speed", 5, 1, 15);
 local BETTERSYNC_SWAY_RANGE1 = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_rangestart", "Range Start", -58, -58, 58);
 local BETTERSYNC_SWAY_RANGE2 = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_rangeend", "Range End", 58, -58, 58);
-local BETTERSYNC_SWAY_DEADZONE = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_deadzone", "Deadzone", 1, 0, 58);
+local BETTERSYNC_SWAY_DEADZONE = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_deadzone", "Deadzone", 0, 0, 58);
 
 --- BetterSync Variables
 local pLocal;
@@ -260,7 +260,7 @@ local function handleUpdates()
         if (version ~= VERSION_NUMBER) then
             update_available = true;
         end
-        BETTERSYNC_UPDATER_TEXT:SetText("Your client is up to date. Current Version: " .. VERSION_NUMBER)
+        BETTERSYNC_UPDATER_TEXT:SetText("Your client is up to date. Current Version: v" .. VERSION_NUMBER)
     end
 end
 
