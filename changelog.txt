@@ -77,9 +77,12 @@ Release 1.0]
 [Release 3.1]
 * Fixed bug where the lua would stop changing antiaim slider values after a round end/game end/mapchange.
 
-[Release 3.1]
+[Release 3.2]
 * Fixed Anti-LBY
 * Added more LBY-Modes
+
+[Release 3.3]
+* Fixed Pulse Fake Chams
 
 [Release 3.4]
 * Added seperate LBY Sway
