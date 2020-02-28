@@ -8,7 +8,7 @@
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")
-local VERSION_NUMBER = "3.2"; --- This too
+local VERSION_NUMBER = "3.3"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
@@ -34,10 +34,10 @@ local BETTERSYNC_JUMPSCOUT = gui.Checkbox(BETTERSYNC_MISC_GROUP, "rbot_bettersyn
 local BETTERSYNC_PULSEFAKE = gui.Checkbox(BETTERSYNC_MISC_GROUP, "rbot_bettersync_msc_pulsefake", "Pulsating Fake Chams", 0);
 
 ---Sway GUI Stuff
-local BETTERSYNC_SWAY_SPEED = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_speed", "Speed", 5, 1, 15);
+local BETTERSYNC_SWAY_SPEED = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_speed", "Speed", 3, 1, 15);
 local BETTERSYNC_SWAY_RANGE1 = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_rangestart", "Range Start", -58, -58, 58);
 local BETTERSYNC_SWAY_RANGE2 = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_rangeend", "Range End", 58, -58, 58);
-local BETTERSYNC_SWAY_DEADZONE = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_deadzone", "Deadzone", 0, 0, 58);
+local BETTERSYNC_SWAY_DEADZONE = gui.Slider(BETTERSYNC_SWAY_GROUP, "rbot_bettersync_sway_deadzone", "Deadzone", 30, 0, 58);
 
 --- BetterSync Variables
 local pLocal;
@@ -66,7 +66,7 @@ local function handlePulse()
 
         if globals.TickCount() > lastTickPulse then
 
-            if (cs2 >= 75) then
+            if (cs2 >= 125) then
                 cd2 = 1;
             elseif (cs2 <= 0 + s) then
                 cd2 = 0;
@@ -79,8 +79,8 @@ local function handlePulse()
             end
 
             if cs2 < 0 then cs2 = 0 end
-            local r, g, b, a = gui.GetValue("esp.chams.ghost.visible");
-            gui.SetValue("esp.chams.ghost.visible", r, g, b, cs2);
+            local r, g, b, a = gui.GetValue("esp.chams.ghost.visible.clr");
+            gui.SetValue("esp.chams.ghost.visible.clr", r, g, b, cs2);
             lastTickPulse = globals.TickCount()
         end
     end
