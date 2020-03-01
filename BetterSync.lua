@@ -7,16 +7,28 @@
 --- Auto updater Variables
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
+local BETA_SCIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSyncBeta.lua"
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")#
-local VERSION_NUMBER = "3.4"; --- This too
+local VERSION_NUMBER = "3.5"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
+
+local function betaUpdate()
+
+    BETTERSYNC_UPDATER_TEXT:SetText("Downloading Beta Client...")
+    local beta_version_content = http.Get(BETA_SCIPT_FILE_ADDR);
+    local old_script = file.Open(SCRIPT_FILE_NAME, "w");
+    old_script:Write(new_version_content);
+    old_script:Close();
+    BETTERSYNC_UPDATER_TEXT:SetText("Downloaded the Beta Client! Please reload the script.")
+end
 
 --- Auto Updater GUI Stuff
 local BETTERSYNC_UPDATER_TAB = gui.Tab(gui.Reference("Settings"), "bettersync.updater.tab", "BetterSync™ Autoupdater")
 local BETTERSYNC_UPDATER_GROUP = gui.Groupbox(BETTERSYNC_UPDATER_TAB, "Auto Updater for BetterSync™ | v" .. VERSION_NUMBER, 15, 15, 600, 600)
 local BETTERSYNC_UPDATER_TEXT = gui.Text(BETTERSYNC_UPDATER_GROUP, "")
+local BETTERSYNC_UPDATER_BETABUTTON = gui.Button(BETTERSYNC_UPDATER_GROUP, "Download Beta Client", betaUpdate)
 
 --- BetterSync Tab
 local BETTERSYNC_TAB = gui.Tab(gui.Reference("Ragebot"), "bettersync.tab", "BetterSync")
@@ -238,7 +250,7 @@ local function handleDesync()
             gui.SetValue("rbot.antiaim.right.lby", lby)
         end
 
-        if not inFreezeTime and BETTERSYNC_ENABLE:GetValue() then
+        if not inFreezeTime and BETTERSYNC_ENABLE:GetValue() and not SUYUCORE:GetValue() then
             gui.SetValue("rbot.antiaim.base.rotation", val)
             gui.SetValue("rbot.antiaim.left.rotation", val)
             gui.SetValue("rbot.antiaim.right.rotation", val)

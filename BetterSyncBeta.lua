@@ -7,16 +7,28 @@
 --- Auto updater Variables
 local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
+local BETA_SCIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSyncBeta.lua"
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")#
-local VERSION_NUMBER = "3.4"; --- This too
+local VERSION_NUMBER = "3.5"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
+
+local function betaUpdate()
+
+    BETTERSYNC_UPDATER_TEXT:SetText("Downloading Beta Client...")
+    local beta_version_content = http.Get(BETA_SCIPT_FILE_ADDR);
+    local old_script = file.Open(SCRIPT_FILE_NAME, "w");
+    old_script:Write(new_version_content);
+    old_script:Close();
+    BETTERSYNC_UPDATER_TEXT:SetText("Downloaded the Beta Client! Please reload the script.")
+end
 
 --- Auto Updater GUI Stuff
 local BETTERSYNC_UPDATER_TAB = gui.Tab(gui.Reference("Settings"), "bettersync.updater.tab", "BetterSync™ Autoupdater")
 local BETTERSYNC_UPDATER_GROUP = gui.Groupbox(BETTERSYNC_UPDATER_TAB, "Auto Updater for BetterSync™ | v" .. VERSION_NUMBER, 15, 15, 600, 600)
 local BETTERSYNC_UPDATER_TEXT = gui.Text(BETTERSYNC_UPDATER_GROUP, "")
+local BETTERSYNC_UPDATER_BETABUTTON = gui.Button(BETTERSYNC_UPDATER_GROUP, "Download Beta Client", betaUpdate)
 
 --- BetterSync Tab
 local BETTERSYNC_TAB = gui.Tab(gui.Reference("Ragebot"), "bettersync.tab", "BetterSync")
@@ -33,6 +45,7 @@ local BETTERSYNC_LBY_FACTOR_TEXT = gui.Text(BETTERSYNC_DESYNC_GROUP, "")
 local BETTERSYNC_ANTILBY  = gui.Checkbox(BETTERSYNC_DESYNC_GROUP, "rbot.bettersync.antilby", "Anti-LBY", 0);
 
 --- Misc GUI Stuff
+local SUYUCORE = gui.Checkbox(BETTERSYNC_MISC_GROUP, "rbot.bettersync.betafeatures.suyucore", "Betafeature - Suyucore", false)
 local BETTERSYNC_JUMPSCOUT = gui.Checkbox(BETTERSYNC_MISC_GROUP, "rbot.bettersync.misc.jumpscout", "Fix Jumpscout", 0)
 local BETTERSYNC_PULSEFAKE = gui.Checkbox(BETTERSYNC_MISC_GROUP, "rbot.bettersync.misc.pulsefake", "Pulsating Fake Chams", 0);
 local BETTERSYNC_CREDITS = gui.Text(BETTERSYNC_MISC_GROUP, "Made witth love by superyu'#7167.")
@@ -64,6 +77,7 @@ local switch = false;
 local dx, dy, rx, ry = 0, 0, 0, 0
 local lastTick = 0;
 local lastTickPulse = 0
+local suyuSwitch = false;
 
 --- Listeners
 client.AllowListener("round_freeze_end")
@@ -105,7 +119,9 @@ local function handleDesync()
 
     if globals.TickCount() > lastTick then
 
-        if BETTERSYNC_ENABLE:GetValue() then
+        suyuSwitch = not suyuSwitch;
+
+        if BETTERSYNC_ENABLE:GetValue() and not SUYUCORE:GetValue() then
             local speed = BETTERSYNC_SWAY_ROTATION_SPEED:GetValue() / 3
 
             if BETTERSYNC_SWAY_ROTATION_RANGE1:GetValue() < BETTERSYNC_SWAY_ROTATION_RANGE2:GetValue() then
@@ -146,7 +162,7 @@ local function handleDesync()
         end
 
 
-        if BETTERSYNC_LBY_MODE:GetValue() == 4 then
+        if BETTERSYNC_LBY_MODE:GetValue() == 4 and not SUYUCORE:GetValue() then
             local speed2 = BETTERSYNC_SWAY_LBY_SPEED:GetValue() / 3
 
             if BETTERSYNC_SWAY_LBY_RANGE1:GetValue() < BETTERSYNC_SWAY_LBY_RANGE2:GetValue() then
@@ -191,7 +207,7 @@ local function handleDesync()
 
         local lby = 0
 
-        if BETTERSYNC_LBY_MODE:GetValue() > 0 and BETTERSYNC_LBY_MODE:GetValue() ~= 4 then
+        if BETTERSYNC_LBY_MODE:GetValue() > 0 and BETTERSYNC_LBY_MODE:GetValue() ~= 4 and not SUYUCORE:GetValue() then
 
             if BETTERSYNC_LBY_MODE:GetValue() == 1 then
 
@@ -238,10 +254,34 @@ local function handleDesync()
             gui.SetValue("rbot.antiaim.right.lby", lby)
         end
 
-        if not inFreezeTime and BETTERSYNC_ENABLE:GetValue() then
+        if not inFreezeTime and BETTERSYNC_ENABLE:GetValue() and not SUYUCORE:GetValue() then
             gui.SetValue("rbot.antiaim.base.rotation", val)
             gui.SetValue("rbot.antiaim.left.rotation", val)
             gui.SetValue("rbot.antiaim.right.rotation", val)
+        end
+
+        if SUYUCORE:GetValue() then
+
+            local rotation = 0;
+            local yaw = 180;
+
+            if suyuSwitch then
+                rotation = -58
+                yaw = 170
+            else
+                rotation = -50
+                yaw = -170
+            end
+
+            gui.SetValue("rbot.antiaim.base.rotation", rotation)
+            gui.SetValue("rbot.antiaim.left.rotation", rotation)
+            gui.SetValue("rbot.antiaim.right.rotation", rotation)
+            gui.SetValue("rbot.antiaim.base", yaw)
+            gui.SetValue("rbot.antiaim.left", yaw-45)
+            gui.SetValue("rbot.antiaim.right", yaw+45)
+            gui.SetValue("rbot.antiaim.base.lby", (rotation * -1) * 0.85)
+            gui.SetValue("rbot.antiaim.left.lby", (rotation * -1) * 0.85)
+            gui.SetValue("rbot.antiaim.right.lby", (rotation * -1) * 0.85)
         end
 
         lastTick = globals.TickCount()
@@ -365,4 +405,4 @@ local function handleUpdates()
     end
 end
 
-callbacks.Register("Draw", handleUpdates)
+---callbacks.Register("Draw", handleUpdates)
