@@ -9,14 +9,20 @@ local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local BETA_SCIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSyncBeta.lua"
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")#
-local VERSION_NUMBER = "3.5b"; --- This too
+local VERSION_NUMBER = "3.5c"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
 local betaUpdateDownloaded = false;
+local isBeta = false;
 
 local function betaUpdate()
-    BETTERSYNC_UPDATER_TEXT:SetText("Downloading Beta Client...")
+
+    if isBeta then
+        return;
+    end
+
+    BETTERSYNC_UPDATER_TEXT:SetText("Downloading Beta Client.")
     local beta_version_content = http.Get(BETA_SCIPT_FILE_ADDR);
     local old_script = file.Open(SCRIPT_FILE_NAME, "w");
     old_script:Write(new_version_content);
@@ -375,7 +381,11 @@ local function handleUpdates()
             update_available = true;
         end
         if not betaUpdateDownloaded then
-            BETTERSYNC_UPDATER_TEXT:SetText("Your client is up to date. Current Version: v" .. VERSION_NUMBER)
+            if isBeta then
+                BETTERSYNC_UPDATER_TEXT:SetText("You are using the newest Beta client. Current Version: v" .. VERSION_NUMBER .. " Beta Build")
+            else
+                BETTERSYNC_UPDATER_TEXT:SetText("Your client is up to date. Current Version: v" .. VERSION_NUMBER)
+            end
         end
     end
 end
