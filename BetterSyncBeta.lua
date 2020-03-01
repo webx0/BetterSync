@@ -9,12 +9,17 @@ local SCRIPT_FILE_NAME = GetScriptName();
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSync.lua";
 local BETA_SCIPT_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/BetterSyncBeta.lua"
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/superyor/BetterSync/master/version.txt"; --- in case of update i need to update this. (Note by superyu'#7167 "so i don't forget it.")#
-local VERSION_NUMBER = "3.5d"; --- This too
+local VERSION_NUMBER = "3.5e"; --- This too
 local version_check_done = false;
 local update_downloaded = false;
 local update_available = false;
 local betaUpdateDownloaded = false;
 local isBeta = true;
+
+--- Auto Updater GUI Stuff
+local BETTERSYNC_UPDATER_TAB = gui.Tab(gui.Reference("Settings"), "bettersync.updater.tab", "BetterSync™ Autoupdater")
+local BETTERSYNC_UPDATER_GROUP = gui.Groupbox(BETTERSYNC_UPDATER_TAB, "Auto Updater for BetterSync™ | v" .. VERSION_NUMBER, 15, 15, 600, 600)
+local BETTERSYNC_UPDATER_TEXT = gui.Text(BETTERSYNC_UPDATER_GROUP, "")
 
 local function betaUpdate()
 
@@ -34,10 +39,6 @@ local function betaUpdate()
     BETTERSYNC_UPDATER_TEXT:SetText("Downloaded the Beta Client! Please reload the script.")
 end
 
---- Auto Updater GUI Stuff
-local BETTERSYNC_UPDATER_TAB = gui.Tab(gui.Reference("Settings"), "bettersync.updater.tab", "BetterSync™ Autoupdater")
-local BETTERSYNC_UPDATER_GROUP = gui.Groupbox(BETTERSYNC_UPDATER_TAB, "Auto Updater for BetterSync™ | v" .. VERSION_NUMBER, 15, 15, 600, 600)
-local BETTERSYNC_UPDATER_TEXT = gui.Text(BETTERSYNC_UPDATER_GROUP, "")
 local BETTERSYNC_UPDATER_BETABUTTON = gui.Button(BETTERSYNC_UPDATER_GROUP, "Download Beta Client", betaUpdate)
 
 --- BetterSync Tab
