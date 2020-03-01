@@ -1,4 +1,4 @@
-# BetterSync - Release 3.4
+# BetterSync - Release 3.5e
 
 ## What is BetterSync?
 BetterSync is a lua extention for the Aimware Cheat client for CS:GO, it's main purpose is to allow users to configurate the Anti-Aimbot
@@ -93,6 +93,12 @@ better.
 ###### [Release 3.4]
 * Added seperate LBY Sway
 * Made LBY Modes more simpler (more minimalistic).
+
+###### [Release 3.5]
+* Added Beta build + Button to download the beta build.
+
+###### [Release 3.5a to 3.5e]
+* Various fixes around the Beta Downloader
 
 ## Contact:
 * E-Mail: superyu.development@gmail.com
